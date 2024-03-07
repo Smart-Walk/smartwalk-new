@@ -80,7 +80,7 @@ def predict_location(access_points):
     dt_classifier.fit(X, y)
     results.append(dt_classifier.predict([X_test])[0])
 
-    return files[results.index(max(set(results), key=results.count))]
+    return files[results[results.index(max(set(results), key=results.count))]]
 
 
 class MyHandler(http.server.SimpleHTTPRequestHandler):
