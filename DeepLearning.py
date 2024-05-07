@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
+import threading
 
 files = [
     "300.txt",
@@ -134,19 +135,38 @@ for key in all_keys:
     signal = test_json.get(key)
     X_test.append(signal if signal else 0)
 
-gnb = GaussianNB()
-y_pred = gnb.fit(X, y)
-print(y_pred.predict([X_test]))
+def part_1():
+    gnb = GaussianNB()
+    y_pred = gnb.fit(X, y)
+    result = y_pred.predict([X_test])
+    print("Part 1 result:", result)
 
+def part_2():
+    neigh = KNeighborsClassifier(n_neighbors=2)
+    neigh.fit(X, y)
+    result = neigh.predict([X_test])
+    print("Part 2 result:", result)
 
-X, y = np.array(X), np.array(y)
-neigh = KNeighborsClassifier(n_neighbors=2)
-neigh.fit(X, y)
-print(neigh.predict([X_test]))
+def part_3():
+    dt_classifier = DecisionTreeClassifier(random_state=4)
+    dt_classifier.fit(X, y)
+    result = dt_classifier.predict([X_test])
+    print("Part 3 result:", result)
 
-dt_classifier = DecisionTreeClassifier(random_state=4)
-dt_classifier.fit(X, y)
-print(dt_classifier.predict([X_test]))
+# Spawn threads for each part
+thread1 = threading.Thread(target=part_1)
+thread2 = threading.Thread(target=part_2)
+thread3 = threading.Thread(target=part_3)
+
+# Start each thread
+thread1.start()
+thread2.start()
+thread3.start()
+
+# Wait for all threads to finish
+thread1.join()
+thread2.join()
+thread3.join()
 
 print(X_test in X, (X == X_test).all(1), y[-2])
 
